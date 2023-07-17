@@ -1,0 +1,306 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+
+public class SupplierReceipt extends JFrame implements ActionListener,ItemListener
+{
+	JLabel l1,l2,l3,l4,l5,l6,l7,l8;
+	JTextField t1,t2,t3,t4,t5,t6;
+    JLabel lI;
+	ImageIcon img;
+	JComboBox c1;
+	JButton b1,b2,b3;
+	
+	public SupplierReceipt()
+	{
+		setLayout(null);
+		img=new ImageIcon("Stationary2.png");
+		lI=new JLabel(img);
+		lI.setBounds(0,0,1440,900);
+		 add(lI);
+		l1=new JLabel("Date");
+		l2=new JLabel("Transcation Id");
+		l3=new JLabel("Supplier Name");
+		l4=new JLabel("Current Balance");
+		l5=new JLabel("Recived Cash");
+		l6=new JLabel("Balance ");
+		l7=new JLabel("Description");
+		l8=new JLabel("Supplier Receipt");
+	
+		t1=new JTextField();
+		t2=new JTextField();
+		t3=new JTextField();
+		t4=new JTextField();
+		t5=new JTextField();
+		t6=new JTextField();
+		c1=new JComboBox();
+		
+		
+		
+		b1=new JButton("Receipt");
+		b2=new JButton("Add");
+		b3=new JButton("Exit");
+		
+		
+		
+		l1.setBounds(250,250,150,30);
+		l2.setBounds(250,300,150,30);
+		l3.setBounds(250,350,150,30);
+		
+		
+		l4.setBounds(630,250,150,30);
+		l5.setBounds(630,300,150,30);
+		l6.setBounds(630,350,150,30);
+		
+		
+		l7.setBounds(480,420,150,30);
+		
+		
+		l8.setBounds(420,100,500,100);//Heading
+		
+		t1.setBounds(400,250,150,30);
+		t2.setBounds(400,300,150,30);
+		c1.setBounds(400,350,150,30);
+		
+		t3.setBounds(800,250,150,30);
+		t4.setBounds(800,300,150,30);
+		t5.setBounds(800,350,150,30);
+		
+		t6.setBounds(560,400,190,60);
+		
+		
+		
+		
+		b2.setBounds(465,480,100,30);//add
+		b1.setBounds(580,480,100,30);//Receipt
+		b3.setBounds(700,480,100,30);//exit   
+		
+		
+		
+		
+		lI.add(l1);
+		lI.add(l2);
+		lI.add(l3);
+		lI.add(l4);
+		lI.add(l5);
+		lI.add(l6);
+		lI.add(l7);
+		lI.add(l8);
+		lI.add(t1);
+		lI.add(t2);
+		lI.add(t3);
+		lI.add(t4);
+		lI.add(t5);
+		lI.add(t6);
+		lI.add(c1);
+		lI.add(b1);
+		lI.add(b2);
+		lI.add(b3);
+		
+		setSize(1440,900);
+		setLocationRelativeTo(null);
+		 setTitle("Supplier Receipt");
+		setVisible(true);
+        
+        
+        Font f=new Font("Times New Roman",Font.BOLD,35);
+                                  l8.setFont(f);
+                                  l8.setForeground(Color.red);
+		
+		formload();
+		
+		b1.addActionListener(this);
+		b2.addActionListener(this);
+		b3.addActionListener(this);
+		c1.addItemListener(this);
+		
+		
+	}
+	public void itemStateChanged(ItemEvent ie)
+	{
+		  JComboBox c=(JComboBox)ie.getSource();
+		  if(c==c1)
+		  {
+			 getdata();
+		  }
+	}
+	public void actionPerformed(ActionEvent e)
+	{
+		JButton B=(JButton)e.getSource();
+		if(B==b2)
+		{
+			try
+			{
+				addCustomerName();
+			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+										
+                    Connection cn=DriverManager.getConnection("jdbc:odbc:Stationary");
+                    Statement  st=cn.createStatement();
+                                           String sql="select max(T_ID) from Supplier_Receipt";
+                                         ResultSet rs=st.executeQuery(sql);
+										 rs.next();
+										
+                                     int n=rs.getInt(1);
+										 addbutton();
+                                            
+                                     n=n+1;
+                                    t2.setText(Integer.toString(n));
+                                      cn.close();
+                                   }
+                        catch(Exception ea)
+                           {
+                                  JOptionPane.showMessageDialog(null,ea);
+                              }
+		}
+		if(B==b1)
+		{
+			try
+			{
+				int cb,rc,bal;
+             cb=Integer.parseInt(t3.getText());
+             rc=Integer.parseInt(t4.getText());	
+             bal=cb-rc;
+             t5.setText(Integer.toString(bal));
+             int x=0;
+            String  str=(String)c1.getSelectedItem();
+             Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+										
+              Connection cn=DriverManager.getConnection("jdbc:odbc:Stationary");
+              Statement  st=cn.createStatement();	
+             String sql="insert into Supplier_Receipt values ('"+t1.getText()+"',"+t2.getText() + ",'"+str+"',"+ x +","+t4.getText()+","+t5.getText()+",'"+t6.getText()+"')";
+             		int k =st.executeUpdate(sql);
+                     if(k>0)
+					 {
+                        JOptionPane.showMessageDialog(null,"Trancation Completed");  
+					 }		
+						cn.close();
+				
+		    }
+			catch(Exception qw)
+			{
+				  JOptionPane.showMessageDialog(null,qw);
+			}
+		}
+		if(b3==B)
+					{
+				//getdata();
+	
+				this.setVisible(false);
+				new MDI();
+		
+			
+			
+		
+	    }
+		
+	
+	}
+		
+		
+		
+		
+	
+public void addCustomerName()
+	  {
+		 try
+		 {
+			 c1.removeAllItems();
+			 Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+			 Connection cn=DriverManager.getConnection("jdbc:odbc:Stationary");
+             Statement  st=cn.createStatement();
+			String sql="select S_name from SupplierInfo";
+			ResultSet rs=st.executeQuery(sql);
+										while(rs.next())
+										{
+											c1.addItem(rs.getString(1));
+										}
+                                      cn.close();
+                                   }
+                        catch(Exception ea1)
+                           {
+                                  JOptionPane.showMessageDialog(null,ea1);
+                              }
+	}
+/*	public void adddata()
+   {
+	   try
+	   {
+		   getT_id();
+		  String str="no";
+		   int x=0;
+		    Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+	          Connection cn5=DriverManager.getConnection("jdbc:odbc:CustomerInfo");
+			  Statement st5=cn5.createStatement();
+	        String sql5="insert into Cust_receipt values('" + str + "'," + t_id + ",'" + t2.getText() + "'," + x + "," + x + "," + x + ",'" + str +  "')"; 
+	         //  System.out.println(sql5);
+			 int k=st5.executeUpdate(sql5);
+										if (k>0)
+										{
+											//JOptionPane.showMessageDialog(null,"Transcation Completed");
+										}
+										 
+									 cn5.close();
+										 }
+										 catch(Exception n)
+										 {
+											JOptionPane.showMessageDialog(null,n); 
+										 }
+									 } */
+		public void getdata()
+{
+	  try
+	  {
+		 
+				Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+			     Connection cn=DriverManager.getConnection("jdbc:odbc:Stationary");
+                Statement  st=cn.createStatement();
+		   String str=(String)c1.getSelectedItem();
+		   String sql="select max(T_ID) from Supplier_Receipt where S_name='"+ str + "'";
+		  // System.out.println(sql);
+		   ResultSet rs=st.executeQuery(sql);
+                rs.next();
+				int n=rs.getInt(1);
+				
+				//System.out.println("getData" + tid1);
+				String sql1="Select Balance from Supplier_Receipt where T_ID="+ n;
+				 ResultSet rs1=st.executeQuery(sql1);
+				rs1.next();
+				t3.setText(rs1.getString(1));
+				cn.close();
+	  }
+	  catch(Exception qa)
+	  {
+		   JOptionPane.showMessageDialog(null,qa);
+	  }
+	  
+}
+public void formload()
+{
+		t1.setEnabled(false);
+	b1.setEnabled(false);
+	b2.setEnabled(true);
+	t2.setEnabled(false);
+c1.setEnabled(false);
+		t3.setEnabled(false);
+		t4.setEnabled(false);
+		t5.setEnabled(false);
+		t6.setEnabled(false);
+}
+void addbutton()
+{
+	    t1.setEnabled(true);
+		//t3.setEnabled(true);
+		t4.setEnabled(true);
+		//t5.setEnabled(true);
+		t6.setEnabled(true);
+		b1.setEnabled(true);
+		b2.setEnabled(false);
+		c1.setEnabled(true);
+       // B6.setEnabled(true);
+}
+	public static void main (String[]args)
+	{
+		new SupplierReceipt();
+	}
+  }
